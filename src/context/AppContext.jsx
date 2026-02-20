@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import {
   INITIAL_INCIDENTS, INITIAL_ALERTS, INITIAL_EVAC,
   INITIAL_RESIDENTS, INITIAL_RESOURCES, INITIAL_USERS, INITIAL_ACTIVITY,
+  KAUSWAGAN_CENTER,
 } from '../data/mockData';
 
 const AppContext = createContext(null);
@@ -20,7 +21,7 @@ export function AppProvider({ children }) {
     setActLog(p => [{ id: genId('LOG'), action, type, user, time: new Date().toISOString() }, ...p]);
 
   // INCIDENTS
-  const addIncident = (d) => { const inc = { ...d, id: genId('INC'), status: 'Pending', dateReported: new Date().toISOString(), lat: 8.490 + (Math.random()-.5)*.01, lng: 124.656 + (Math.random()-.5)*.01 }; setIncidents(p=>[inc,...p]); log(`Incident ${inc.id}: ${inc.type} in ${inc.zone}`, 'Incident'); return inc; };
+  const addIncident = (d) => { const inc = { ...d, id: genId('INC'), status: 'Pending', dateReported: new Date().toISOString(), lat: KAUSWAGAN_CENTER[0] + (Math.random()-.5)*.01, lng: KAUSWAGAN_CENTER[1] + (Math.random()-.5)*.01 }; setIncidents(p=>[inc,...p]); log(`Incident ${inc.id}: ${inc.type} in ${inc.zone}`, 'Incident'); return inc; };
   const updateIncident = (id, d) => { setIncidents(p=>p.map(i=>i.id===id?{...i,...d}:i)); log(`Incident ${id} updated`,'Incident'); };
   const deleteIncident = (id)    => { setIncidents(p=>p.filter(i=>i.id!==id)); log(`Incident ${id} deleted`,'Incident'); };
 
@@ -29,7 +30,7 @@ export function AppProvider({ children }) {
   const deleteAlert = (id) => { setAlerts(p=>p.filter(a=>a.id!==id)); log(`Alert ${id} removed`,'Alert'); };
 
   // EVAC
-  const addEvacCenter    = (d) => { const c={...d,id:genId('EVC'),lat:8.490+(Math.random()-.5)*.015,lng:124.656+(Math.random()-.5)*.015}; setEvacCenters(p=>[...p,c]); log(`Evac center "${c.name}" added`,'Evacuation'); return c; };
+  const addEvacCenter    = (d) => { const c={...d,id:genId('EVC'),lat:KAUSWAGAN_CENTER[0]+(Math.random()-.5)*.015,lng:KAUSWAGAN_CENTER[1]+(Math.random()-.5)*.015}; setEvacCenters(p=>[...p,c]); log(`Evac center "${c.name}" added`,'Evacuation'); return c; };
   const updateEvacCenter = (id,d) => { setEvacCenters(p=>p.map(c=>c.id===id?{...c,...d}:c)); log(`Evac center ${id} updated`,'Evacuation'); };
   const deleteEvacCenter = (id)   => { setEvacCenters(p=>p.filter(c=>c.id!==id)); log(`Evac center ${id} removed`,'Evacuation'); };
 
