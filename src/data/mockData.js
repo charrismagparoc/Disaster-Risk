@@ -43,4 +43,4 @@ export const INCIDENT_TYPES      = ['Flood','Fire','Landslide','Storm','Earthqua
 export const RESOURCE_CATEGORIES = ['Equipment','Medical','Food Supply','Vehicle','Safety Gear'];
 export const VULNERABILITY_TAGS  = ['Senior Citizen','PWD','Pregnant','Infant','Bedridden'];
 export const EVAC_FACILITIES     = ['Water','Restroom','Medical','Power','Food','Sleeping Area'];
-export const KAUSWAGAN_CENTER    = [8.490, 124.656];
+export const KAUSWAGAN_CENTER    = [8.496339, 124.6397073];
