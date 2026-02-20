@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/MapPage.css';
 import { useApp } from '../context/AppContext';
+import { KAUSWAGAN_CENTER } from '../data/mockData';
 
 const TYPE_COLOR = { Flood:'#4cc9f0', Fire:'#e63946', Landslide:'#f4a261', Storm:'#f9c74f', Earthquake:'#b39ddb' };
 
@@ -10,6 +11,8 @@ const FILTERS = [
   { key:'evacuation', label:'Evacuation',   icon:'fa-house-flag'           },
   { key:'incidents',  label:'Incidents',    icon:'fa-circle-radiation'     },
 ];
+
+const BRGY_HALL_COORDS = [KAUSWAGAN_CENTER[0] - 0.00035, KAUSWAGAN_CENTER[1] + 0.00055];
 
 export default function MapPage() {
   const mapRef    = useRef(null);
@@ -25,15 +28,17 @@ export default function MapPage() {
     const build = () => {
       if (mapInst.current || !window.L || !mapRef.current) return;
       const L = window.L;
-      mapInst.current = L.map(mapRef.current, { center:[8.490,124.656], zoom:15 });
+      mapInst.current = L.map(mapRef.current, { center: KAUSWAGAN_CENTER, zoom:16 });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(mapInst.current);
+      const [lat, lng] = KAUSWAGAN_CENTER;
+      const pt = (dLat, dLng) => [lat + dLat, lng + dLng];
 
       // Hazard zones
       const hazardGrp = L.layerGroup();
       [
-        { coords:[[8.493,124.652],[8.495,124.658],[8.491,124.660],[8.489,124.654]], color:'#e63946', label:'Zone 3 — High Flood Risk'    },
-        { coords:[[8.494,124.660],[8.497,124.665],[8.493,124.666],[8.491,124.661]], color:'#f4a261', label:'Zone 5 — Landslide Prone'    },
-        { coords:[[8.486,124.652],[8.489,124.656],[8.487,124.658],[8.484,124.654]], color:'#f9c74f', label:'Zone 1 — Fire Risk'           },
+        { coords:[pt( 0.0019, 0.0009), pt( 0.0026, 0.0040), pt( 0.0007, 0.0048), pt( 0.0001, 0.0015)], color:'#e63946', label:'Zone 3 — High Flood Risk' },
+        { coords:[pt( 0.0022,-0.0004), pt( 0.0032, 0.0011), pt( 0.0018, 0.0018), pt( 0.0010, 0.0002)], color:'#f4a261', label:'Zone 5 — Landslide Prone' },
+        { coords:[pt(-0.0016, 0.0004), pt(-0.0005, 0.0022), pt(-0.0021, 0.0035), pt(-0.0028, 0.0013)], color:'#f9c74f', label:'Zone 1 — Fire Risk' },
       ].forEach(z => L.polygon(z.coords,{color:z.color,fillColor:z.color,fillOpacity:0.2,weight:2}).addTo(hazardGrp).bindPopup(`<b>${z.label}</b>`));
       layerRefs.current.hazard = hazardGrp;
       hazardGrp.addTo(mapInst.current);
@@ -60,7 +65,7 @@ export default function MapPage() {
 
       // Brgy Hall
       const hallIcon = L.divIcon({ className:'', html:'<div style="background:#7b5ea7;color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;border:2px solid rgba(255,255,255,0.8);box-shadow:0 2px 8px rgba(0,0,0,.5)">🏛 BRGY HALL</div>' });
-      L.marker([8.4895,124.6558],{icon:hallIcon}).addTo(mapInst.current).bindPopup('<b>Barangay Kauswagan Hall</b><br>BDRRMC Command Center<br>CDO, Misamis Oriental');
+      L.marker(BRGY_HALL_COORDS,{icon:hallIcon}).addTo(mapInst.current).bindPopup('<b>Barangay Kauswagan Hall</b><br>BDRRMC Command Center<br>Cagayan de Oro City, Misamis Oriental');
 
       setMapReady(true);
     };
